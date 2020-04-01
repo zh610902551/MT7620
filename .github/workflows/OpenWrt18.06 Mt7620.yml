@@ -66,14 +66,8 @@ jobs:
    
     - name: 自定义插件
       run: | 
-           cd package/diy
-           tar   xvJf  luci-app-docker.tar.xz
-           tar   xvJf  luci-app-koolddns.tar.xz
-           tar   xvJf  luci-app-rclone.tar.xz
-           tar   xvJf  autocore.tar.xz
-           tar   xvJf  luci-app-nps.tar.xz
-           tar   xvJf  luci-app-adbyby-plus.tar.xz   
-           git clone  https://github.com/Leo-Jo/luci-app-vssr
+        
+           git clone  https://github.com/Leo-Jo/luci-app-vssr package/luci-app-vssr
      
      
            
