@@ -61,7 +61,24 @@ jobs:
         sudo -E apt-get -qq clean
     - name: Clone source code
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt18.06
-
+   
+   
+   
+    - name: 自定义插件
+      run: | 
+           rm    -rfv  package/lean/autocore
+           rm    -rfv  package/lean/luci-app-adbyby-plus
+           cd package/diy
+           tar   xvJf  luci-app-docker.tar.xz
+           tar   xvJf  luci-app-koolddns.tar.xz
+           tar   xvJf  luci-app-rclone.tar.xz
+           tar   xvJf  autocore.tar.xz
+           tar   xvJf  luci-app-nps.tar.xz
+           tar   xvJf  luci-app-adbyby-plus.tar.xz   
+           git clone  https://github.com/Leo-Jo/luci-app-vssr
+     
+     
+           
     - name: Update feeds
       run: cd openwrt18.06 && ./scripts/feeds update -a
 
