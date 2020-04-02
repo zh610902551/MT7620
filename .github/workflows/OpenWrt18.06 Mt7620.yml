@@ -22,7 +22,7 @@ on:
 #    types: [started]
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/Lienol/openwrt
   REPO_BRANCH: master
   CONFIG_FILE: Mt7620.config
   DIY_SH: diy.sh
@@ -61,16 +61,7 @@ jobs:
         sudo -E apt-get -qq clean
     - name: Clone source code
       run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
-   
-   
-   
-    - name: 自定义插件
-      run: | 
-        
-           git clone  https://github.com/Leo-Jo/luci-app-vssr package/luci-app-vssr
-     
-     
-           
+                
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
 
