@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: Build openwrt18.06
+name: Build openwrt19.07
 
 on:
   release:
@@ -22,7 +22,7 @@ on:
 #    types: [started]
 
 env:
-  REPO_URL: https://github.com/Ameykyl/openwrt18.06
+  REPO_URL: https://github.com/Lienol/openwrt
   REPO_BRANCH: master
   CONFIG_FILE: Mt7620.config
   DIY_SH: diy.sh
@@ -60,7 +60,7 @@ jobs:
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
     - name: Clone source code
-      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt18.06
+      run: git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
    
    
    
@@ -72,17 +72,17 @@ jobs:
      
            
     - name: Update feeds
-      run: cd openwrt18.06 && ./scripts/feeds update -a
+      run: cd openwrt && ./scripts/feeds update -a
 
     - name: Install feeds
-      run: cd openwrt18.06 && ./scripts/feeds install -a
+      run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
       run: |
-        [ -e files ] && mv files openwrt18.06/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt18.06/.config
+        [ -e files ] && mv files openwrt/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x $DIY_SH
-        cd openwrt18.06
+        cd openwrt
         ../$DIY_SH
         make defconfig
     - name: SSH connection to Actions
@@ -92,14 +92,14 @@ jobs:
     - name: Download package
       id: package
       run: |
-        cd openwrt18.06
+        cd openwrt
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
     - name: Compile the firmware
       id: compile
       run: |
-        cd openwrt18.06
+        cd openwrt
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 V=s
         echo "::set-output name=status::success"
@@ -107,14 +107,14 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
-        name: openwrt18.06_directory
-        path: openwrt18.06/bin
+        name: openwrt_directory
+        path: openwrt/bin
 
     - name: Organize files
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        cd openwrt18.06/bin/targets/*/*
+        cd openwrt/bin/targets/*/*
         rm -rf packages
         echo "::set-env name=FIRMWARE::$(pwd)"
         echo "::set-output name=status::success"
@@ -122,5 +122,5 @@ jobs:
       uses: actions/upload-artifact@master
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
-        name: openwrt18.06_firmware
+        name: openwrt_firmware
         path: ${{ env.FIRMWARE }}
